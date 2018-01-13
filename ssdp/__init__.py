@@ -1,3 +1,4 @@
+"""Python asyncio library for Simple Service Discovery Protocol (SSDP)."""
 import asyncio
 import email.parser
 import errno
