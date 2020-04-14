@@ -1,7 +1,8 @@
 import asyncio
 import errno
-from . import *
+import logging
 
+from . import *
 
 logger = logging.getLogger('ssdp.asyncio')
 
@@ -19,7 +20,7 @@ class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol):
         logger.debug("%s:%s > %s", *(addr + (data,)))
 
         msg = SSDPMessage.parse(data)
-        if isinstance(msgi, SSDPResponse):
+        if isinstance(msg, SSDPResponse):
             self.response_received(msg, addr)
         elif isinstance(msg, SSDPRequest):
             self.request_received(msg, addr)
