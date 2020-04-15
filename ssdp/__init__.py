@@ -1,4 +1,5 @@
 """Python asyncio library for Simple Service Discovery Protocol (SSDP)."""
+import abc
 import asyncio
 import email.parser
 import errno
@@ -6,13 +7,17 @@ import logging
 
 __all__ = ("SSDPRequest", "SSDPResponse", "SimpleServiceDiscoveryProtocol")
 
+from typing import Iterable, Tuple, List
+
 logger = logging.getLogger("ssdp")
 
 
-class SSDPMessage:
+class SSDPMessage(abc.ABC):
     """Simplified HTTP message to serve as a SSDP message."""
 
-    def __init__(self, version="HTTP/1.1", headers=None):
+    def __init__(
+        self, version: str = "HTTP/1.1", headers: Iterable[Tuple[str, str]] = None
+    ):
         if headers is None:
             headers = []
         elif isinstance(headers, dict):
@@ -22,9 +27,10 @@ class SSDPMessage:
         self.headers = list(headers)
 
     @classmethod
-    def parse(cls, msg):
+    @abc.abstractmethod
+    def parse(cls, msg: str) -> "SSDPMessage":
         """
-        Parse message from string.
+        Parse message from a string into a :class:`SSDPMessage` instance.
 
         Args:
             msg (str): Message string.
@@ -33,27 +39,26 @@ class SSDPMessage:
             SSDPMessage: Message parsed from string.
 
         """
-        raise NotImplementedError()
 
     @classmethod
-    def parse_headers(cls, msg):
+    def parse_headers(cls, msg: str) -> List[Tuple[str, str]]:
         """
-        Parse HTTP headers.
+        Parse HTTP headers to list.
 
         Args:
             msg (str): HTTP message.
 
         Returns:
-            (List[Tuple[str, str]): List of header tuples.
+            (List[Tuple[str, str]]): List of header tuples.
 
         """
         return list(email.parser.Parser().parsestr(msg).items())
 
-    def __str__(self):
+    @abc.abstractmethod
+    def __str__(self) -> str:
         """Return complete HTTP message."""
-        raise NotImplementedError()
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         """Return complete HTTP message as bytes."""
         return self.__str__().encode().replace(b"\n", b"\r\n")
 
@@ -61,13 +66,13 @@ class SSDPMessage:
 class SSDPResponse(SSDPMessage):
     """Simple Service Discovery Protocol (SSDP) response."""
 
-    def __init__(self, status_code, reason, **kwargs):
-        self.status_code = int(status_code)
-        self.reason = reason
+    def __init__(self, status_code: [int, float, str], reason: str, **kwargs):
+        self.status_code: int = int(status_code)
+        self.reason: str = reason
         super().__init__(**kwargs)
 
     @classmethod
-    def parse(cls, msg):
+    def parse(cls, msg: str) -> "SSDPResponse":
         """Parse message string to response object."""
         lines = msg.splitlines()
         version, status_code, reason = lines[0].split()
@@ -76,7 +81,7 @@ class SSDPResponse(SSDPMessage):
             version=version, status_code=status_code, reason=reason, headers=headers
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return complete SSDP response."""
         lines = list()
         lines.append(" ".join([self.version, str(self.status_code), self.reason]))
@@ -88,20 +93,26 @@ class SSDPResponse(SSDPMessage):
 class SSDPRequest(SSDPMessage):
     """Simple Service Discovery Protocol (SSDP) request."""
 
-    def __init__(self, method, uri="*", version="HTTP/1.1", headers=None):
-        self.method = method
+    def __init__(
+        self,
+        method: str,
+        uri: str = "*",
+        version: str = "HTTP/1.1",
+        headers: Iterable[Tuple[str, str]] = None,
+    ):
+        self.method: str = method
         self.uri = uri
         super().__init__(version=version, headers=headers)
 
     @classmethod
-    def parse(cls, msg):
+    def parse(cls, msg) -> "SSDPRequest":
         """Parse message string to request object."""
         lines = msg.splitlines()
         method, uri, version = lines[0].split()
         headers = cls.parse_headers("\r\n".join(lines[1:]))
         return cls(version=version, uri=uri, method=method, headers=headers)
 
-    def sendto(self, transport, addr):
+    def sendto(self, transport: asyncio.DatagramTransport, addr: Tuple[str, int]):
         """
         Send request to a given address via given transport.
 
@@ -117,7 +128,7 @@ class SSDPRequest(SSDPMessage):
         transport.sendto(msg, addr)
 
     def __str__(self):
-        """Return complete SSDP request."""
+        """Return full SSDP request."""
         lines = list()
         lines.append(" ".join([self.method, self.uri, self.version]))
         for header in self.headers:
@@ -125,7 +136,7 @@ class SSDPRequest(SSDPMessage):
         return "\n".join(lines)
 
 
-class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol):
+class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol, abc.ABC):
     """
     Simple Service Discovery Protocol (SSDP).
 
@@ -144,27 +155,27 @@ class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol):
         else:
             self.request_received(SSDPRequest.parse(data), addr)
 
-    def response_received(self, response, addr):
+    @abc.abstractmethod
+    def response_received(self, response: SSDPResponse, addr: Tuple[str, int]):
         """
         Being called when some response is received.
 
         Args:
             response (SSDPResponse): Received response.
-            addr (Tuple[str, int]: Tuple containing IP address and port number.
+            addr (Tuple[str, int]): Tuple containing IP address and port number.
 
         """
-        raise NotImplementedError()
 
-    def request_received(self, request, addr):
+    @abc.abstractmethod
+    def request_received(self, request: SSDPRequest, addr: Tuple[str, int]):
         """
         Being called when some request is received.
 
         Args:
             request (SSDPRequest): Received request.
-            addr (Tuple[str, int]: Tuple containing IP address and port number.
+            addr (Tuple[str, int]): Tuple containing IP address and port number.
 
         """
-        raise NotImplementedError()
 
     def error_received(self, exc):
         if exc == errno.EAGAIN or exc == errno.EWOULDBLOCK:
