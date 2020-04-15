@@ -24,7 +24,7 @@ class SSDPMessage:
     @classmethod
     def parse(cls, msg):
         """
-        Parse message from string.
+        Parse message a string into a :class:`SSDPMessage` instance.
 
         Args:
             msg (str): Message string.
@@ -44,17 +44,17 @@ class SSDPMessage:
             msg (str): HTTP message.
 
         Returns:
-            (List[Tuple[str, str]): List of header tuples.
+            (List[Tuple[str, str]]): List of header tuples.
 
         """
         return list(email.parser.Parser().parsestr(msg).items())
 
     def __str__(self):
-        """Return complete HTTP message."""
+        """Return full HTTP message."""
         raise NotImplementedError()
 
     def __bytes__(self):
-        """Return complete HTTP message as bytes."""
+        """Return full HTTP message as bytes."""
         return self.__str__().encode().replace(b"\n", b"\r\n")
 
 
@@ -150,7 +150,7 @@ class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol):
 
         Args:
             response (SSDPResponse): Received response.
-            addr (Tuple[str, int]: Tuple containing IP address and port number.
+            addr (Tuple[str, int]): Tuple containing IP address and port number.
 
         """
         raise NotImplementedError()
@@ -161,7 +161,7 @@ class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol):
 
         Args:
             request (SSDPRequest): Received request.
-            addr (Tuple[str, int]: Tuple containing IP address and port number.
+            addr (Tuple[str, int]): Tuple containing IP address and port number.
 
         """
         raise NotImplementedError()
