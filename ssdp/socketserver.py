@@ -1,10 +1,10 @@
-import typing
-import socketserver
-import socket
-import struct
 import logging
+import socket
+import socketserver
 from ssdp.entity import *
 from ssdp.network import *
+import struct
+import typing
 
 
 logger = logging.getLogger('ssdp.socketserver')

@@ -1,11 +1,11 @@
 """Python library for Simple Service Discovery Protocol (SSDP)."""
 
+import ssdp.asyncio as asyncio
 import ssdp.entity as entity
 import ssdp.network as network
-import ssdp.asyncio as asyncio
 
-from .entity import *
 from .asyncio import *
+from .entity import *
 from . import _version
 
 __all__ = entity.__all__ + asyncio.__all__
