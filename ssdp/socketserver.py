@@ -3,7 +3,8 @@ import socketserver
 import socket
 import struct
 import logging
-from . import *
+from ssdp.entity import *
+from ssdp.network import *
 
 
 logger = logging.getLogger('ssdp.socketserver')
@@ -51,5 +52,5 @@ class Server6(socketserver.UDPServer):
 
     def __init__(self, ifindex: int, request_handler: typing.Callable[[], RequestHandler]):
         self.ifindex = ifindex
-        super(Server6, self).__init__((str(NetworkConstants.MULTICAST_ADDRESS_IPV6_LINK_LOCAL), NetworkConstants.PORT, 0, ifindex), request_handler)
+        super(Server6, self).__init__((str(MULTICAST_ADDRESS_IPV6_LINK_LOCAL), PORT, 0, ifindex), request_handler)
 

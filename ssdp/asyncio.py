@@ -1,8 +1,10 @@
 import asyncio
 import errno
 import logging
+from ssdp.entity import *
 
-from . import *
+
+__all__ = ['SimpleServiceDiscoveryProtocol']
 
 logger = logging.getLogger('ssdp.asyncio')
 
