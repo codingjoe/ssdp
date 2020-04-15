@@ -15,7 +15,9 @@ ct: 4000
 rgb: 16711680
 hue: 100
 sat: 35
-name: my_bulb""".replace(b'\n', b'\r\n')
+name: my_bulb""".replace(
+    b"\n", b"\r\n"
+)
 
 response = b"""HTTP/1.1 200 OK
 Cache-Control: max-age=3600
@@ -34,11 +36,15 @@ ct: 4000
 rgb: 16711680
 hue: 100
 sat: 35
-name: my_bulb""".replace(b'\n', b'\r\n')
+name: my_bulb""".replace(
+    b"\n", b"\r\n"
+)
 
 response_wrong_location = b"""HTTP/1.1 200 OK
 Cache-Control: max-age=3600
 Date:
 Ext:
 Location: yeelight://not.an.ip:55443
-Server: POSIX UPnP/1.0 YGLC/1""".replace(b'\n', b'\r\n')
+Server: POSIX UPnP/1.0 YGLC/1""".replace(
+    b"\n", b"\r\n"
+)
