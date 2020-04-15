@@ -1,11 +1,11 @@
 import logging
 import socket
 import socketserver
-from ssdp.entity import *
-from ssdp.network import *
 import struct
 import typing
 
+from ssdp.entity import *
+from ssdp.network import *
 
 logger = logging.getLogger('ssdp.socketserver')
 

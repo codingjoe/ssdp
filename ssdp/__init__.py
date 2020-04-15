@@ -3,7 +3,6 @@
 import ssdp.asyncio as asyncio
 import ssdp.entity as entity
 import ssdp.network as network
-
 from .asyncio import *
 from .entity import *
 from . import _version

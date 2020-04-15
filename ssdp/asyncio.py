@@ -1,8 +1,8 @@
 import asyncio
 import errno
 import logging
-from ssdp.entity import *
 
+from ssdp.entity import *
 
 __all__ = ['SimpleServiceDiscoveryProtocol']
 
