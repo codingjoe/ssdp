@@ -10,7 +10,7 @@ Setup
 
 .. code:: shell
 
-    pip install ssdp
+    python3 -m pip install ssdp
 
 
 Usage
