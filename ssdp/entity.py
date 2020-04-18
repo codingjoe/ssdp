@@ -1,17 +1,16 @@
 import email.parser
 import logging
 
+__all__ = ("SSDPMessage", "SSDPRequest", "SSDPResponse")
 
-__all__ = ('SSDPMessage', 'SSDPRequest', 'SSDPResponse')
 
-
-logger = logging.getLogger('ssdp.entity')
+logger = logging.getLogger("ssdp.entity")
 
 
 class SSDPMessage:
     """Simplified HTTP message to serve as a SSDP message."""
 
-    def __init__(self, version='HTTP/1.1', headers=None):
+    def __init__(self, version="HTTP/1.1", headers=None):
         if headers is None:
             headers = []
         elif isinstance(headers, dict):
@@ -32,7 +31,7 @@ class SSDPMessage:
             SSDPMessage: Message parsed from string.
 
         """
-        if msg.startswith('HTTP/'):
+        if msg.startswith("HTTP/"):
             return SSDPResponse.parse(msg)
         else:
             return SSDPRequest.parse(msg)
@@ -57,7 +56,7 @@ class SSDPMessage:
 
     def __bytes__(self):
         """Return complete HTTP message as bytes."""
-        return self.__str__().encode().replace(b'\n', b'\r\n')
+        return self.__str__().encode().replace(b"\n", b"\r\n")
 
 
 class SSDPResponse(SSDPMessage):
@@ -73,25 +72,24 @@ class SSDPResponse(SSDPMessage):
         """Parse message string to response object."""
         lines = msg.splitlines()
         version, status_code, reason = lines[0].split()
-        headers = cls.parse_headers('\r\n'.join(lines[1:]))
-        return cls(version=version, status_code=status_code,
-                   reason=reason, headers=headers)
+        headers = cls.parse_headers("\r\n".join(lines[1:]))
+        return cls(
+            version=version, status_code=status_code, reason=reason, headers=headers
+        )
 
     def __str__(self):
         """Return complete SSDP response."""
         lines = list()
-        lines.append(' '.join(
-            [self.version, str(self.status_code), self.reason]
-        ))
+        lines.append(" ".join([self.version, str(self.status_code), self.reason]))
         for header in self.headers:
-            lines.append('%s: %s' % header)
-        return '\n'.join(lines)
+            lines.append("%s: %s" % header)
+        return "\n".join(lines)
 
 
 class SSDPRequest(SSDPMessage):
     """Simple Service Discovery Protocol (SSDP) request."""
 
-    def __init__(self, method, uri='*', version='HTTP/1.1', headers=None):
+    def __init__(self, method, uri="*", version="HTTP/1.1", headers=None):
         self.method = method
         self.uri = uri
         super().__init__(version=version, headers=headers)
@@ -101,7 +99,7 @@ class SSDPRequest(SSDPMessage):
         """Parse message string to request object."""
         lines = msg.splitlines()
         method, uri, version = lines[0].split()
-        headers = cls.parse_headers('\r\n'.join(lines[1:]))
+        headers = cls.parse_headers("\r\n".join(lines[1:]))
         return cls(version=version, uri=uri, method=method, headers=headers)
 
     def sendto(self, transport, addr):
@@ -115,17 +113,16 @@ class SSDPRequest(SSDPMessage):
                 IP address and port pair to send the message to.
 
         """
-        msg = bytes(self) + b'\r\n'
+        msg = bytes(self) + b"\r\n"
         logger.debug("%s:%s < %s", *(addr + (self,)))
         transport.sendto(msg, addr)
 
     def __str__(self):
         """Return complete SSDP request."""
         lines = list()
-        lines.append(' '.join(
+        lines.append(" ".join(
             [self.method, self.uri, self.version]
         ))
         for header in self.headers:
-            lines.append('%s: %s' % header)
-        return '\n'.join(lines)
-
+            lines.append("%s: %s" % header)
+        return "\n".join(lines)

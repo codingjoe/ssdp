@@ -7,14 +7,14 @@ import typing
 from ssdp.entity import *
 from ssdp.network import *
 
-logger = logging.getLogger('ssdp.socketserver')
+logger = logging.getLogger("ssdp.socketserver")
 
 
 class RequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         packet_bytes = self.request[0]
         try:
-            packet_str = packet_bytes.decode('utf-8')
+            packet_str = packet_bytes.decode("utf-8")
         except UnicodeDecodeError:
             return
 
@@ -44,13 +44,26 @@ class Server6(socketserver.UDPServer):
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(self.server_address)
         try:
-            s.setsockopt(socket.IPPROTO_IPV6, 20,  # IPV6_ADD_MEMBERSHIP
-                struct.pack("16si", socket.inet_pton(socket.AF_INET6, self.server_address[0]), self.server_address[3])  # struct ipv6_mreq
+            s.setsockopt(
+                socket.IPPROTO_IPV6,
+                20,  # IPV6_ADD_MEMBERSHIP
+                struct.pack(
+                    "16si",
+                    socket.inet_pton(socket.AF_INET6, self.server_address[0]),
+                    self.server_address[3]
+                ),  # struct ipv6_mreq
             )
         except OSError as err:
-            logging.error('Failed to subscribe to IPv6 multicast. Error: %d, %s' % (err.errno, err.strerror))
+            logging.error(
+                "Failed to subscribe to IPv6 multicast. Error: %d, %s"
+                % (err.errno, err.strerror)
+            )
 
-    def __init__(self, ifindex: int, request_handler: typing.Callable[[], RequestHandler]):
+    def __init__(
+        self, ifindex: int, request_handler: typing.Callable[[], RequestHandler]
+    ):
         self.ifindex = ifindex
-        super(Server6, self).__init__((str(MULTICAST_ADDRESS_IPV6_LINK_LOCAL), PORT, 0, ifindex), request_handler)
+        super(Server6, self).__init__(
+            (str(MULTICAST_ADDRESS_IPV6_LINK_LOCAL), PORT, 0, ifindex), request_handler
+        )
 

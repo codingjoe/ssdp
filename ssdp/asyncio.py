@@ -4,9 +4,10 @@ import logging
 
 from ssdp.entity import *
 
-__all__ = ['SimpleServiceDiscoveryProtocol']
+__all__ = ["SimpleServiceDiscoveryProtocol"]
 
-logger = logging.getLogger('ssdp.asyncio')
+
+logger = logging.getLogger("ssdp.asyncio")
 
 
 class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol):
@@ -53,7 +54,7 @@ class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol):
 
     def error_received(self, exc):
         if exc == errno.EAGAIN or exc == errno.EWOULDBLOCK:
-            logger.error('Error received: %s', exc)
+            logger.error("Error received: %s", exc)
         else:
             raise IOError("Unexpected connection error") from exc
 
