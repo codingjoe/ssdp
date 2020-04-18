@@ -120,9 +120,7 @@ class SSDPRequest(SSDPMessage):
     def __str__(self):
         """Return complete SSDP request."""
         lines = list()
-        lines.append(" ".join(
-            [self.method, self.uri, self.version]
-        ))
+        lines.append(" ".join([self.method, self.uri, self.version]))
         for header in self.headers:
             lines.append("%s: %s" % header)
         return "\n".join(lines)

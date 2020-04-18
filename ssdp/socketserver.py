@@ -50,7 +50,7 @@ class Server6(socketserver.UDPServer):
                 struct.pack(
                     "16si",
                     socket.inet_pton(socket.AF_INET6, self.server_address[0]),
-                    self.server_address[3]
+                    self.server_address[3],
                 ),  # struct ipv6_mreq
             )
         except OSError as err:
@@ -66,4 +66,3 @@ class Server6(socketserver.UDPServer):
         super(Server6, self).__init__(
             (str(MULTICAST_ADDRESS_IPV6_LINK_LOCAL), PORT, 0, ifindex), request_handler
         )
-
