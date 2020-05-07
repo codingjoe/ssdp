@@ -19,6 +19,8 @@ Usage
 .. code:: python
 
     import asyncio
+    import socket
+
     import ssdp
 
 
@@ -45,3 +47,9 @@ Usage
 
     transport.close()
     loop.close()
+
+
+Examples
+--------
+
+The `examples <examples/>`_ directory contains examples on how to use this library.
