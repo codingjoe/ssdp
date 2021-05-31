@@ -133,7 +133,7 @@ class SSDPRequest(SSDPMessage):
     def __str__(self):
         """Return complete SSDP request."""
         lines = list()
-        lines.append(' '.join([self.method, self.uri, self.version]))
+        lines.append(" ".join([self.method, self.uri, self.version]))
         for header in self.headers:
             lines.append("%s: %s" % header)
         return "\n".join(lines)
@@ -164,14 +164,14 @@ class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol):
 
         Args:
             response (SSDPResponse): Received response.
-            addr (Tuple[str, int]: Tuple containing IP address and port number.
+            addr (Tuple[str, int]): Tuple containing IP address and port number.
 
         """
         raise NotImplementedError()
 
     def request_received(self, request, addr):
         """
-        Called when some request is received.
+        Being called when some request is received.
 
         Args:
             request (SSDPRequest): Received request.
