@@ -126,7 +126,11 @@ class SSDPRequest(SSDPMessage):
                 IP address and port pair to send the message to.
 
         """
+<<<<<<< HEAD
         msg = bytes(self) + b"\r\n\r\n\r\n"
+=======
+        msg = bytes(self) + b"\r\n" + b"\r\n"
+>>>>>>> ed14a0fa78fd1ab887718e255837517cd9f112fc
         logger.debug("%s:%s < %s", *(addr + (self,)))
         transport.sendto(msg, addr)
 
