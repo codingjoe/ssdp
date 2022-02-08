@@ -76,7 +76,7 @@ class SSDPResponse(SSDPMessage):
             version=version, status_code=status_code, reason=reason, headers=headers
         )
         
-   def sendto(self, transport, addr):
+    def sendto(self, transport, addr):
         """
         Send response to a given address via given transport.
         Args:
