@@ -1,7 +1,13 @@
 import email.parser
 import logging
 
-__all__ = ["SSDPMessage", "SSDPRequest", "SSDPResponse", "SSDPException", "UnexpectedMessage"]
+__all__ = [
+    "SSDPMessage",
+    "SSDPRequest",
+    "SSDPResponse",
+    "SSDPException",
+    "UnexpectedMessage",
+]
 
 
 logger = logging.getLogger(__name__)
