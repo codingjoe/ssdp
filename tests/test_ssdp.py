@@ -3,7 +3,13 @@ import socket
 
 import pytest
 
-from ssdp import SimpleServiceDiscoveryProtocol, SSDPMessage, SSDPRequest, SSDPResponse
+from ssdp import (
+    SimpleServiceDiscoveryProtocol,
+    SSDPMessage,
+    SSDPRequest,
+    SSDPResponse,
+    UnexpectedMessage,
+)
 
 from . import fixtures
 
@@ -24,9 +30,15 @@ class TestSSDPMessage:
         msg = SSDPMessage(headers=None)
         assert msg.headers == []
 
-    def test_parse(self):
-        with pytest.raises(NotImplementedError):
+    def test_parse__empty(self):
+        with pytest.raises(UnexpectedMessage) as e:
             SSDPMessage.parse("")
+        assert str(e.value) == "Empty message"
+
+    def test_parse__unexpected(self):
+        with pytest.raises(UnexpectedMessage) as e:
+            SSDPMessage.parse("asdf")
+        assert str(e.value) == "Invalid request: asdf"
 
     def test_parse_headers(self):
         headers = SSDPMessage.parse_headers("Cache-Control: max-age=3600")

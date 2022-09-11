@@ -1,10 +1,18 @@
 import email.parser
 import logging
 
-__all__ = ["SSDPMessage", "SSDPRequest", "SSDPResponse"]
+__all__ = ["SSDPMessage", "SSDPRequest", "SSDPResponse", "SSDPException", "UnexpectedMessage"]
 
 
 logger = logging.getLogger(__name__)
+
+
+class SSDPException(IOError):
+    pass
+
+
+class UnexpectedMessage(SSDPException):
+    pass
 
 
 class SSDPMessage:
@@ -30,11 +38,15 @@ class SSDPMessage:
         Returns:
             SSDPMessage: Message parsed from string.
 
+        Raises:
+            UnexpectedMessage: If message is not SSDP message.
+
         """
         if msg.startswith("HTTP/"):
             return SSDPResponse.parse(msg)
-        else:
+        elif msg:
             return SSDPRequest.parse(msg)
+        raise UnexpectedMessage("Empty message")
 
     @classmethod
     def parse_headers(cls, msg):
@@ -98,7 +110,10 @@ class SSDPRequest(SSDPMessage):
     def parse(cls, msg):
         """Parse message string to request object."""
         lines = msg.splitlines()
-        method, uri, version = lines[0].split()
+        try:
+            method, uri, version = lines[0].split()
+        except (IndexError, ValueError) as e:
+            raise UnexpectedMessage("Invalid request: %s" % lines[0]) from e
         headers = cls.parse_headers("\r\n".join(lines[1:]))
         return cls(version=version, uri=uri, method=method, headers=headers)
 
