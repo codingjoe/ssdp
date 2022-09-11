@@ -4,8 +4,12 @@ import email.parser
 import errno
 import logging
 
-__all__ = ("SSDPRequest", "SSDPResponse", "SimpleServiceDiscoveryProtocol")
+from . import _version
 
+__version__ = _version.version
+__all__ = ["SSDPRequest", "SSDPResponse", "SimpleServiceDiscoveryProtocol"]
+
+VERSION = _version.version_tuple
 logger = logging.getLogger("ssdp")
 
 
