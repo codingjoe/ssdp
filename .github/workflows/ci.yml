@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 jobs:
@@ -19,26 +19,25 @@ jobs:
           - "pydocstyle ."
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-python@v4.1.0
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3.0.8
+      - uses: actions/setup-python@v4
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: "3.x"
+          cache: "pip"
+          cache-dependency-path: "requirements.txt"
       - run: python -m pip install -r requirements.txt
       - run: ${{ matrix.lint-command }}
 
   dist:
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt install -y gettext
-      - uses: actions/setup-python@v4.1.0
       - uses: actions/checkout@v3
-      - name: Install Python dependencies
-        run: python -m pip install --upgrade pip setuptools wheel twine readme-renderer
-      - run: python setup.py sdist bdist_wheel
+      - run: sudo apt install -y gettext
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - run: python -m pip install --upgrade build wheel twine readme-renderer
+      - run: python -m build --sdist --wheel
       - run: python -m twine check dist/*
       - uses: actions/upload-artifact@v3
         with:
@@ -54,20 +53,15 @@ jobs:
           - windows-latest
           - macos-latest
         python-version:
-          - "3.6"
-          - "3.7"
           - "3.8"
           - "3.9"
-        exclude:
-          - os: windows-latest
-            python-version: 3.6
+          - "3.10"
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4.1.0
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: actions/checkout@v3
       - run: python -m pip install --upgrade setuptools wheel codecov
-      - run: python setup.py test
-      - run: codecov
+      - run: python -m pip install -e .[test]
+      - uses: codecov/codecov-action@v2
