@@ -1,10 +1,10 @@
 import email.parser
 import logging
 
-__all__ = ("SSDPMessage", "SSDPRequest", "SSDPResponse")
+__all__ = ["SSDPMessage", "SSDPRequest", "SSDPResponse"]
 
 
-logger = logging.getLogger("ssdp.entity")
+logger = logging.getLogger(__name__)
 
 
 class SSDPMessage:

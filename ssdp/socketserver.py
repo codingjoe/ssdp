@@ -4,10 +4,11 @@ import socketserver
 import struct
 import typing
 
-from ssdp.entity import *
-from ssdp.network import *
+from . import entity, network
 
-logger = logging.getLogger("ssdp.socketserver")
+__all__ = ["RequestHandler", "Server6"]
+
+logger = logging.getLogger(__name__)
 
 
 class RequestHandler(socketserver.BaseRequestHandler):
@@ -18,20 +19,20 @@ class RequestHandler(socketserver.BaseRequestHandler):
         except UnicodeDecodeError:
             return
 
-        msg = SSDPMessage.parse(packet_str)
-        if isinstance(msg, SSDPRequest):
+        msg = entity.SSDPMessage.parse(packet_str)
+        if isinstance(msg, entity.SSDPRequest):
             logger.debug("request received: %s from %s", str(msg), self.request[1])
             self.request_received(msg)
-        elif isinstance(msg, SSDPResponse):
+        elif isinstance(msg, entity.SSDPResponse):
             logger.debug("response received: %s from %s", str(msg), self.request[1])
             self.response_received(msg)
         else:
             logger.debug("unknown received: %s from %s", str(msg), self.request[1])
 
-    def request_received(self, request: SSDPRequest):
+    def request_received(self, request: entity.SSDPRequest):
         raise NotImplementedError()
 
-    def resonse_received(self, response: SSDPResponse):
+    def response_received(self, response: entity.SSDPResponse):
         raise NotImplementedError()
 
 
@@ -64,5 +65,6 @@ class Server6(socketserver.UDPServer):
     ):
         self.ifindex = ifindex
         super(Server6, self).__init__(
-            (str(MULTICAST_ADDRESS_IPV6_LINK_LOCAL), PORT, 0, ifindex), request_handler
+            (str(network.MULTICAST_ADDRESS_IPV6_LINK_LOCAL), network.PORT, 0, ifindex),
+            request_handler,
         )

@@ -34,7 +34,7 @@ connect = loop.create_datagram_endpoint(MyProtocol, family=socket.AF_INET)
 transport, protocol = loop.run_until_complete(connect)
 
 notify = ssdp.SSDPRequest('NOTIFY')
-notify.sendto(transport, (MyProtocol.MULTICAST_ADDRESS, 1982))
+notify.sendto(transport, (ssdp.MULTICAST_ADDRESS_IPV4, 1982))
 
 try:
     loop.run_forever()

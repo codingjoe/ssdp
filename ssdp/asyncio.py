@@ -2,12 +2,11 @@ import asyncio
 import errno
 import logging
 
-from ssdp.entity import *
-
 __all__ = ["SimpleServiceDiscoveryProtocol"]
 
+from . import entity
 
-logger = logging.getLogger("ssdp.asyncio")
+logger = logging.getLogger(__name__)
 
 
 class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol):
@@ -22,10 +21,10 @@ class SimpleServiceDiscoveryProtocol(asyncio.DatagramProtocol):
         data = data.decode()
         logger.debug("%s:%s > %s", *(addr + (data,)))
 
-        msg = SSDPMessage.parse(data)
-        if isinstance(msg, SSDPResponse):
+        msg = entity.SSDPMessage.parse(data)
+        if isinstance(msg, entity.SSDPResponse):
             self.response_received(msg, addr)
-        elif isinstance(msg, SSDPRequest):
+        elif isinstance(msg, entity.SSDPRequest):
             self.request_received(msg, addr)
         else:
             pass
