@@ -2,6 +2,7 @@
 """Waiting for a M-SEARCH request and respond to it."""
 import asyncio
 import socket
+import struct
 
 import ssdp
 
@@ -55,11 +56,14 @@ class MyProtocol(ssdp.SimpleServiceDiscoveryProtocol):
 def main():
     # Start the asyncio loop.
     loop = asyncio.get_event_loop()
-    connect = loop.create_datagram_endpoint(
-        MyProtocol,
-        family=socket.AF_INET,
-        local_addr=(MyProtocol.MULTICAST_ADDRESS, 1900),
-    )
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind((MyProtocol.MULTICAST_ADDRESS, 1900))
+    mreq = struct.pack("4sl", socket.inet_aton(MyProtocol.MULTICAST_ADDRESS), socket.INADDR_ANY)
+
+    sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+
+    connect = loop.create_datagram_endpoint(MyProtocol, sock=sock)
     transport, protocol = loop.run_until_complete(connect)
 
     # Ensure MyProtocol has something send to.
