@@ -80,6 +80,21 @@ class SSDPResponse(SSDPMessage):
             version=version, status_code=status_code, reason=reason, headers=headers
         )
 
+    def sendto(self, transport, addr):
+        """
+        Send response to a given address via given transport.
+
+        Args:
+            transport (asyncio.DatagramTransport):
+                Write transport to send the message on.
+            addr (Tuple[str, int]):
+                IP address and port pair to send the message to.
+
+        """
+        msg = bytes(self) + b"\r\n" + b"\r\n"
+        logger.debug("%s:%s < %s", *(addr + (self,)))
+        transport.sendto(msg, addr)
+
     def __str__(self):
         """Return complete SSDP response."""
         lines = list()
