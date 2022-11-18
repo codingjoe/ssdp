@@ -61,6 +61,21 @@ class SSDPMessage:
         """Return full HTTP message as bytes."""
         return self.__str__().encode().replace(b"\n", b"\r\n")
 
+    def sendto(self, transport, addr):
+        """
+        Send request/response to a given address via given transport.
+
+        Args:
+            transport (asyncio.DatagramTransport):
+                Write transport to send the message on.
+            addr (Tuple[str, int]):
+                IP address and port pair to send the message to.
+
+        """
+        msg = bytes(self) + b"\r\n" + b"\r\n"
+        logger.debug("%s:%s < %s", *(addr + (self,)))
+        transport.sendto(msg, addr)
+
 
 class SSDPResponse(SSDPMessage):
     """Simple Service Discovery Protocol (SSDP) response."""
@@ -79,21 +94,6 @@ class SSDPResponse(SSDPMessage):
         return cls(
             version=version, status_code=status_code, reason=reason, headers=headers
         )
-
-    def sendto(self, transport, addr):
-        """
-        Send response to a given address via given transport.
-
-        Args:
-            transport (asyncio.DatagramTransport):
-                Write transport to send the message on.
-            addr (Tuple[str, int]):
-                IP address and port pair to send the message to.
-
-        """
-        msg = bytes(self) + b"\r\n" + b"\r\n"
-        logger.debug("%s:%s < %s", *(addr + (self,)))
-        transport.sendto(msg, addr)
 
     def __str__(self):
         """Return complete SSDP response."""
@@ -119,21 +119,6 @@ class SSDPRequest(SSDPMessage):
         method, uri, version = lines[0].split()
         headers = cls.parse_headers("\r\n".join(lines[1:]))
         return cls(version=version, uri=uri, method=method, headers=headers)
-
-    def sendto(self, transport, addr):
-        """
-        Send request to a given address via given transport.
-
-        Args:
-            transport (asyncio.DatagramTransport):
-                Write transport to send the message on.
-            addr (Tuple[str, int]):
-                IP address and port pair to send the message to.
-
-        """
-        msg = bytes(self) + b"\r\n" + b"\r\n"
-        logger.debug("%s:%s < %s", *(addr + (self,)))
-        transport.sendto(msg, addr)
 
     def __str__(self):
         """Return complete SSDP request."""
