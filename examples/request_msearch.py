@@ -36,11 +36,11 @@ class MyProtocol(ssdp.SimpleServiceDiscoveryProtocol):
         print()
 
 
-def main():
+async def main():
     # Start the asyncio loop.
     loop = asyncio.get_event_loop()
     connect = loop.create_datagram_endpoint(MyProtocol, family=socket.AF_INET)
-    transport, protocol = loop.run_until_complete(connect)
+    transport, protocol = await connect
 
     # Send out an M-SEARCH request, requesting all service types.
     search_request = ssdp.SSDPRequest(
@@ -56,13 +56,12 @@ def main():
 
     # Keep on running for 4 seconds.
     try:
-        loop.run_until_complete(asyncio.sleep(4))
+        await asyncio.sleep(4)
     except KeyboardInterrupt:
         pass
 
     transport.close()
-    loop.close()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
