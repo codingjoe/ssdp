@@ -24,8 +24,8 @@ jobs:
         with:
           python-version: "3.x"
           cache: "pip"
-          cache-dependency-path: "requirements.txt"
-      - run: python -m pip install -r requirements.txt
+          cache-dependency-path: ".github/workflows/linter-requirements.txt"
+      - run: python -m pip install -r .github/workflows/linter-requirements.txt
       - run: ${{ matrix.lint-command }}
 
   dist:

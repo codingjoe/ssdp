@@ -3,7 +3,8 @@ import socket
 
 import pytest
 
-from ssdp import SimpleServiceDiscoveryProtocol, SSDPMessage, SSDPRequest, SSDPResponse
+from ssdp.asyncio import SimpleServiceDiscoveryProtocol
+from ssdp.messages import SSDPMessage, SSDPRequest, SSDPResponse
 
 from . import fixtures
 
@@ -53,10 +54,10 @@ class TestSSDPResponse:
 
     def test_str(self):
         response = SSDPResponse(
-            200, "OK", headers=[("Location", "Location: http://192.168.1.239:55443")]
+            200, "OK", headers=[("Location", "http://192.168.1.239:55443")]
         )
         assert str(response) == (
-            "HTTP/1.1 200 OK\n" "Location: Location: http://192.168.1.239:55443"
+            "HTTP/1.1 200 OK\r\nLocation: http://192.168.1.239:55443"
         )
 
 
@@ -70,16 +71,16 @@ class TestSSDPRequest:
         request = SSDPRequest(
             "NOTIFY", "*", headers=[("Cache-Control", "max-age=3600")]
         )
-        assert str(request) == ("NOTIFY * HTTP/1.1\n" "Cache-Control: max-age=3600")
+        assert str(request) == ("NOTIFY * HTTP/1.1\r\nCache-Control: max-age=3600")
 
     def test_sendto(self):
         requests = []
 
         class MyProtocol(SimpleServiceDiscoveryProtocol):
-            def response_received(self, response, addr):
+            def process_response(self, response, addr):
                 print(response, addr)
 
-            def request_received(self, request, addr):
+            def process_request(self, request, addr):
                 requests.append(request)
                 print(request, addr)
 
