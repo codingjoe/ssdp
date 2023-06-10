@@ -37,6 +37,17 @@ test = [
   "pytest",
   "pytest-cov",
 ]
+cli = [
+  "click",
+  "Pygments",
+]
+pygments = ["Pygments"]
+
+[project.scripts]
+ssdp = "ssdp:__main__.ssdp"
+
+[project.entry-points."pygments.lexers"]
+ssdp = "ssdp.lexers:SSDPLexer"
 
 [project.urls]
 Project-URL = "https://github.com/codingjoe/ssdp"
