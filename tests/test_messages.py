@@ -1,9 +1,9 @@
-import asyncio
-import socket
+from unittest.mock import Mock
 
 import pytest
 
-from ssdp import SimpleServiceDiscoveryProtocol, SSDPMessage, SSDPRequest, SSDPResponse
+from ssdp import network
+from ssdp.messages import SSDPMessage, SSDPRequest, SSDPResponse
 
 from . import fixtures
 
@@ -25,8 +25,8 @@ class TestSSDPMessage:
         assert msg.headers == []
 
     def test_parse(self):
-        with pytest.raises(NotImplementedError):
-            SSDPMessage.parse("")
+        assert isinstance(SSDPMessage.parse("HTTP/1.1 200 OK"), SSDPResponse)
+        assert isinstance(SSDPMessage.parse("NOTIFY * HTTP/1.1"), SSDPRequest)
 
     def test_parse_headers(self):
         headers = SSDPMessage.parse_headers("Cache-Control: max-age=3600")
@@ -42,7 +42,9 @@ class TestSSDPMessage:
                 return "NOTIFY * HTTP/1.1\n" "Cache-Control: max-age=3600"
 
         msg = MyMessage()
-        assert bytes(msg) == (b"NOTIFY * HTTP/1.1\r\n" b"Cache-Control: max-age=3600")
+        assert bytes(msg) == (
+            b"NOTIFY * HTTP/1.1\r\nCache-Control: max-age=3600\r\n\r\n"
+        )
 
 
 class TestSSDPResponse:
@@ -53,10 +55,10 @@ class TestSSDPResponse:
 
     def test_str(self):
         response = SSDPResponse(
-            200, "OK", headers=[("Location", "Location: http://192.168.1.239:55443")]
+            200, "OK", headers=[("Location", "http://192.168.1.239:55443")]
         )
         assert str(response) == (
-            "HTTP/1.1 200 OK\n" "Location: Location: http://192.168.1.239:55443"
+            "HTTP/1.1 200 OK\r\nLocation: http://192.168.1.239:55443"
         )
 
 
@@ -70,31 +72,10 @@ class TestSSDPRequest:
         request = SSDPRequest(
             "NOTIFY", "*", headers=[("Cache-Control", "max-age=3600")]
         )
-        assert str(request) == ("NOTIFY * HTTP/1.1\n" "Cache-Control: max-age=3600")
+        assert str(request) == ("NOTIFY * HTTP/1.1\r\nCache-Control: max-age=3600")
 
     def test_sendto(self):
-        requests = []
-
-        class MyProtocol(SimpleServiceDiscoveryProtocol):
-            def response_received(self, response, addr):
-                print(response, addr)
-
-            def request_received(self, request, addr):
-                requests.append(request)
-                print(request, addr)
-
-        loop = asyncio.get_event_loop()
-        connect = loop.create_datagram_endpoint(MyProtocol, family=socket.AF_INET)
-        transport, protocol = loop.run_until_complete(connect)
-
-        async def send_notify(transport):
-            while True:
-                notify = SSDPRequest("NOTIFY")
-                notify.sendto(transport, (MyProtocol.MULTICAST_ADDRESS, 1982))
-                await asyncio.sleep(1)
-
-        loop.create_task(send_notify(transport))
-
-        loop.run_until_complete(asyncio.sleep(3))
-        transport.close()
-        loop.close()
+        transport = Mock()
+        addr = network.MULTICAST_ADDRESS_IPV4, network.PORT
+        SSDPRequest("NOTIFY", "*").sendto(transport, addr)
+        transport.sendto.assert_called_once_with(b"NOTIFY * HTTP/1.1\r\n\r\n", addr)
