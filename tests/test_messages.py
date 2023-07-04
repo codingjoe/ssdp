@@ -39,7 +39,7 @@ class TestSSDPMessage:
     def test_bytes(self):
         class MyMessage(SSDPMessage):
             def __str__(self):
-                return "NOTIFY * HTTP/1.1\n" "Cache-Control: max-age=3600"
+                return "NOTIFY * HTTP/1.1\r\n" "Cache-Control: max-age=3600"
 
         msg = MyMessage()
         assert bytes(msg) == (
@@ -59,6 +59,16 @@ class TestSSDPResponse:
         )
         assert str(response) == (
             "HTTP/1.1 200 OK\r\nLocation: http://192.168.1.239:55443"
+        )
+
+    def test_sendto(self):
+        transport = Mock()
+        addr = network.MULTICAST_ADDRESS_IPV4, network.PORT
+        SSDPResponse(
+            200, "OK", headers=[("Location", "http://192.168.1.239:55443")]
+        ).sendto(transport, addr)
+        transport.sendto.assert_called_once_with(
+            b"HTTP/1.1 200 OK\r\nLocation: http://192.168.1.239:55443\r\n\r\n", addr
         )
 
 
