@@ -64,8 +64,12 @@ class TestSSDPResponse:
     def test_sendto(self):
         transport = Mock()
         addr = network.MULTICAST_ADDRESS_IPV4, network.PORT
-        SSDPResponse(200, "OK", headers=[("Location", "http://192.168.1.239:55443")]).sendto(transport, addr)
-        transport.sendto.assert_called_once_with(b"HTTP/1.1 200 OK\r\nLocation: http://192.168.1.239:55443\r\n\r\n", addr)
+        SSDPResponse(
+            200, "OK", headers=[("Location", "http://192.168.1.239:55443")]
+        ).sendto(transport, addr)
+        transport.sendto.assert_called_once_with(
+            b"HTTP/1.1 200 OK\r\nLocation: http://192.168.1.239:55443\r\n\r\n", addr
+        )
 
 
 class TestSSDPRequest:

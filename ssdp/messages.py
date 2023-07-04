@@ -73,7 +73,7 @@ class SSDPResponse(SSDPMessage):
         return cls(
             version=version, status_code=status_code, reason=reason, headers=headers
         )
-    
+
     def sendto(self, transport, addr):
         """
         Send response to a given address via given transport.
