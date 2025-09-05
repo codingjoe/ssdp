@@ -33,7 +33,7 @@ class ConsoleMessageProcessor:
         host = click.style(host, fg="green", bold=True)
         port = click.style(str(addr[1]), fg="yellow", bold=True)
         pretty_msg = highlight(str(msg), SSDPLexer(), formatters.TerminalFormatter())
-        click.echo("%s:%s - - [%s] %s" % (host, port, time.asctime(), pretty_msg))
+        click.echo(f"{host}:{port} - - [{time.asctime()}] {pretty_msg}")
 
 
 class PrintSSDMessageProtocol(ConsoleMessageProcessor, SSDP):
@@ -77,21 +77,17 @@ def discover(bind, search_target, max_wait):
     connect = loop.create_datagram_endpoint(PrintSSDMessageProtocol, family=family)
     transport, protocol = loop.run_until_complete(connect)
 
-    target = network.MULTICAST_ADDRESS_IPV4, network.PORT
-
     search_request = messages.SSDPRequest(
         "M-SEARCH",
         headers={
-            "HOST": "%s:%d" % target,
+            "HOST": f"{network.MULTICAST_ADDRESS_IPV4}:{network.PORT:d}",
             "MAN": '"ssdp:discover"',
             "MX": str(max_wait),  # seconds to delay response [1..5]
             "ST": search_target,
         },
     )
 
-    target = network.MULTICAST_ADDRESS_IPV4, network.PORT
-
-    search_request.sendto(transport, target)
+    search_request.sendto(transport, (network.MULTICAST_ADDRESS_IPV4, network.PORT))
 
     PrintSSDMessageProtocol.pprint(search_request, addr[:2])
     try:

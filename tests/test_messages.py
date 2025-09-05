@@ -1,7 +1,6 @@
 from unittest.mock import Mock
 
 import pytest
-
 from ssdp import network
 from ssdp.messages import SSDPMessage, SSDPRequest, SSDPResponse
 

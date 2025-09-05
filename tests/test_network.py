@@ -2,7 +2,6 @@ import socket
 import sys
 
 import pytest
-
 from ssdp import network
 
 
@@ -17,5 +16,5 @@ def test_get_best_family():
 def test_get_best_family__win32():
     assert network.get_best_family(None, 1900) == (
         socket.AF_INET,
-        ("0.0.0.0", 1900, 0, 0),
+        ("0.0.0.0", 1900, 0, 0),  # noqa S104
     )
