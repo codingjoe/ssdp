@@ -39,7 +39,7 @@ class TestSSDPMessage:
     def test_bytes(self):
         class MyMessage(SSDPMessage):
             def __str__(self):
-                return "NOTIFY * HTTP/1.1\r\n" "Cache-Control: max-age=3600"
+                return "NOTIFY * HTTP/1.1\r\nCache-Control: max-age=3600"
 
         msg = MyMessage()
         assert bytes(msg) == (

@@ -14,7 +14,7 @@ class TestSSDPLexer:
         lexers = pytest.importorskip("ssdp.lexers")
 
         lexer = lexers.SSDPLexer()
-        text = "M-SEARCH * HTTP/1.1\r\n" "HOST: example.com:1900\r\n"
+        text = "M-SEARCH * HTTP/1.1\r\nHOST: example.com:1900\r\n"
         tokens = list(lexer.get_tokens(text))
         assert tokens == [
             (pygments.token.Token.Name.Function, "M-SEARCH"),

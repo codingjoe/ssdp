@@ -5,6 +5,7 @@ This module implements SSDP protocol for asyncio event loops. It is based on
 :class:`asyncio.DatagramProtocol` and provides a simple interface for
 implementing SSDP clients and servers.
 """
+
 import asyncio
 import errno
 import logging
