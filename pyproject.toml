@@ -21,16 +21,17 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Framework :: AsyncIO",
   "Topic :: System :: Networking",
   "Topic :: Software Development :: Libraries",
   "Topic :: Home Automation",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 
 [project.optional-dependencies]
 test = [
@@ -40,6 +41,10 @@ test = [
 cli = [
   "click",
   "Pygments",
+]
+lint = [
+  "pre-commit",
+  "ruff",
 ]
 pygments = ["Pygments"]
 
@@ -70,13 +75,29 @@ source = ["ssdp"]
 [tool.coverage.report]
 show_missing = true
 
-[tool.isort]
-atomic = true
-line_length = 88
-known_first_party = "ssdp, tests"
-include_trailing_comma = true
-default_section = "THIRDPARTY"
-combine_as_imports = true
+[tool.ruff]
+src = ["ssdp", "tests"]
 
-[tool.pydocstyle]
-add_ignore = "D1"
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # pyflakes
+    "I", # isort
+    "S", # flake8-bandit
+    "D", # pydocstyle
+    "UP", # pyupgrade
+    "B", # flake8-bugbear
+    "C", # flake8-comprehensions
+]
+
+ignore = ["B904", "D1", "E501", "S101"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+split-on-trailing-comma = true
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+force-wrap-aliases = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"

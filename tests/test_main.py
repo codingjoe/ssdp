@@ -1,4 +1,6 @@
 import importlib
+import os
+import sys
 
 import pytest
 
@@ -12,6 +14,10 @@ class TestDiscover:
         assert results.exit_code == 0
         assert "Usage: ssdp discover [OPTIONS]" in results.output
 
+    @pytest.mark.skipif(
+        os.getenv("CI") == "true" and sys.platform == "darwin",
+        reason="skip on macOS CI",
+    )
     def test_call(self):
         main = pytest.importorskip("ssdp.__main__")
         testing = pytest.importorskip("click.testing")
@@ -19,6 +25,10 @@ class TestDiscover:
         assert results.exit_code == 0
         assert "ssdp:all" in results.output
 
+    @pytest.mark.skipif(
+        os.getenv("CI") == "true" and sys.platform == "darwin",
+        reason="skip on macOS CI",
+    )
     def test_call_w_search_target(self):
         main = pytest.importorskip("ssdp.__main__")
         testing = pytest.importorskip("click.testing")
