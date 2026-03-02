@@ -147,33 +147,32 @@ from ssdp import aio, messages, network
 
 
 class MyProtocol(aio.SimpleServiceDiscoveryProtocol):
+    def response_received(self, response, addr):
+        print(response, addr)
 
-  def response_received(self, response, addr):
-    print(response, addr)
-
-  def request_received(self, request, addr):
-    print(request, addr)
+    def request_received(self, request, addr):
+        print(request, addr)
 
 
 loop = asyncio.get_event_loop()
 connect = loop.create_datagram_endpoint(MyProtocol, family=socket.AF_INET)
 transport, protocol = loop.run_until_complete(connect)
 
-notify = messages.SSDPRequest('NOTIFY')
+notify = messages.SSDPRequest("NOTIFY")
 notify.sendto(transport, (network.MULTICAST_ADDRESS_IPV4, network.PORT))
 
 try:
-  loop.run_forever()
+    loop.run_forever()
 except KeyboardInterrupt:
-  pass
+    pass
 
 transport.close()
 loop.close()
 ```
 
-## SSDP lexer plugin for [Pygments][pygments]
+## SSDP lexer plugin for [Pygments]
 
-The SSDP library comes with a lexer plugin for [Pygments][pygments]
+The SSDP library comes with a lexer plugin for [Pygments]
 to highlight SSDP messages. It's based on a HTTP lexer and adds SSDP
 specific keywords.
 
@@ -194,16 +193,16 @@ You can either get the lexer by name:
 Highlighting a SSDP message, could look like this:
 
 ```python
-#/usr/bin/env python3
+# /usr/bin/env python3
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import TerminalFormatter
 
 
-if __name__ == '__main__':
-    lexer = get_lexer_by_name('ssdp')
+if __name__ == "__main__":
+    lexer = get_lexer_by_name("ssdp")
     formatter = TerminalFormatter()
-    code = 'NOTIFY * HTTP/1.1\r\nHOST: localhost:1900'
+    code = "NOTIFY * HTTP/1.1\r\nHOST: localhost:1900"
     msg = highlight(code, lexer, formatter)
     print(msg)
 ```
