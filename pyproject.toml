@@ -42,10 +42,6 @@ cli = [
   "click",
   "Pygments",
 ]
-lint = [
-  "pre-commit",
-  "ruff",
-]
 pygments = ["Pygments"]
 
 [project.scripts]
