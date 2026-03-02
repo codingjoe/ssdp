@@ -36,6 +36,7 @@ repos:
           - mdformat-gfm
           - mdformat-gfm-alerts
           - mdformat-ruff
+        exclude: ^\.github/agents/.*\.agent\.md$
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.1
     hooks:
