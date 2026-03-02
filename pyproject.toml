@@ -34,15 +34,20 @@ classifiers = [
 requires-python = ">=3.10"
 
 [project.optional-dependencies]
-test = [
-  "pytest",
-  "pytest-cov",
-]
 cli = [
   "click",
   "Pygments",
 ]
 pygments = ["Pygments"]
+
+[dependency-groups]
+dev = [
+  { include-group = "test" },
+]
+test = [
+  "pytest",
+  "pytest-cov",
+]
 
 [project.scripts]
 ssdp = "ssdp:__main__.ssdp"
