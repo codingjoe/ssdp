@@ -5,6 +5,10 @@ Python asyncio library for Simple Service Discovery Protocol (SSDP).
 SSDP is a UPnP substandard. For more information see:
 https://en.wikipedia.org/wiki/Simple_Service_Discovery_Protocol
 
+## Sponsors
+
+[![Sponsors](https://django.the-box.sh/sponsors/codingjoe/ssdp.svg)](https://github.com/sponsors/codingjoe)
+
 ## Setup
 
 ```bash
