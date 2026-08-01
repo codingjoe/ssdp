@@ -8,7 +8,7 @@ import pytest
 @pytest.mark.cli
 class TestDiscover:
     def test_help(self):
-        main = pytest.importorskip("ssdp.__main__")
+        main = pytest.importorskip("ssdp.__main__", exc_type=ImportError)
         testing = pytest.importorskip("click.testing")
         results = testing.CliRunner().invoke(main.ssdp, ["discover", "--help"])
         assert results.exit_code == 0
@@ -19,7 +19,7 @@ class TestDiscover:
         reason="skip on macOS CI",
     )
     def test_call(self):
-        main = pytest.importorskip("ssdp.__main__")
+        main = pytest.importorskip("ssdp.__main__", exc_type=ImportError)
         testing = pytest.importorskip("click.testing")
         results = testing.CliRunner().invoke(main.ssdp, ["discover", "--max-wait", "1"])
         assert results.exit_code == 0
@@ -30,7 +30,7 @@ class TestDiscover:
         reason="skip on macOS CI",
     )
     def test_call_w_search_target(self):
-        main = pytest.importorskip("ssdp.__main__")
+        main = pytest.importorskip("ssdp.__main__", exc_type=ImportError)
         testing = pytest.importorskip("click.testing")
         results = testing.CliRunner().invoke(
             main.ssdp, ["discover", "--max-wait", "1", "--search-target", "ssdp:dial"]
