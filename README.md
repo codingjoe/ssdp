@@ -90,9 +90,9 @@ on the message type.
 
 ```pycon
 >>> import ssdp.messages
->>> ssdp.messages.SSDPRequest.parse('NOTIFY * HTTP/1.1\r\n\r\n')
+>>> ssdp.messages.SSDPRequest.parse("NOTIFY * HTTP/1.1\r\n\r\n")
 <ssdp.messages.SSDPRequest object at 0x7f8b1c0b6a90>
->>> ssdp.messages.SSDPResponse.parse('HTTP/1.1 200 OK\r\n\r\n')
+>>> ssdp.messages.SSDPResponse.parse("HTTP/1.1 200 OK\r\n\r\n")
 <ssdp.messages.SSDPResponse object at 0x7f8b1c0b6a90>
 ```
 
@@ -100,11 +100,14 @@ on the message type.
 
 ```pycon
 >>> from ssdp.messages import SSDPRequest
->>> SSDPRequest('NOTIFY', headers={
-...     'HOST': '10.0.0.42',
-...     'NT': 'upnp:rootdevice',
-...     'NTS': 'ssdp:alive',
-... })
+>>> SSDPRequest(
+...     "NOTIFY",
+...     headers={
+...         "HOST": "10.0.0.42",
+...         "NT": "upnp:rootdevice",
+...         "NTS": "ssdp:alive",
+...     },
+... )
 <ssdp.messages.SSDPRequest object at 0x7f8b1c0b6a90>
 ```
 
@@ -113,7 +116,7 @@ over a open transport.
 
 ```pycon
 >>> from ssdp import network, messages
->>> notify = messages.SSDPRequest('NOTIFY')
+>>> notify = messages.SSDPRequest("NOTIFY")
 >>> notify.sendto(transport, (network.MULTICAST_ADDRESS_IPV4, network.PORT))
 ```
 
@@ -121,12 +124,16 @@ over a open transport.
 
 ```pycon
 >>> from ssdp.messages import SSDPResponse
->>> SSDPResponse(200, 'OK', headers={
-...     'CACHE-CONTROL': 'max-age=1800',
-...     'LOCATION': 'http://10.0.0.1:80/description.xml',
-...     'SERVER': 'Linux/2.6.18 UPnP/1.0 quick_ssdp/1.0',
-...     'ST': 'upnp:rootdevice',
-... })
+>>> SSDPResponse(
+...     200,
+...     "OK",
+...     headers={
+...         "CACHE-CONTROL": "max-age=1800",
+...         "LOCATION": "http://10.0.0.1:80/description.xml",
+...         "SERVER": "Linux/2.6.18 UPnP/1.0 quick_ssdp/1.0",
+...         "ST": "upnp:rootdevice",
+...     },
+... )
 <ssdp.messages.SSDPResponse object at 0x7f8b1c0b6a90>
 ```
 
@@ -190,7 +197,7 @@ You can either get the lexer by name:
 
 ```pycon
 >>> from pygments.lexers import get_lexer_by_name
->>> get_lexer_by_name('ssdp')
+>>> get_lexer_by_name("ssdp")
 <pygments.lexers.SSDPLexer>
 ```
 
