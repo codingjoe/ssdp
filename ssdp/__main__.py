@@ -72,7 +72,7 @@ def ssdp(verbose):
 def discover(bind, search_target, max_wait):
     """Send out an M-SEARCH request and listening for responses."""
     family, addr = network.get_best_family(bind, network.PORT)
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
 
     connect = loop.create_datagram_endpoint(PrintSSDMessageProtocol, family=family)
     transport, protocol = loop.run_until_complete(connect)
