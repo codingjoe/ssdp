@@ -89,10 +89,8 @@ class SSDPResponse(SSDPMessage):
 
     def __str__(self):
         """Return complete SSDP response."""
-        lines = []
-        lines.append(" ".join([self.version, str(self.status_code), self.reason]))
-        for header in self.headers:
-            lines.append("{}: {}".format(*header))
+        lines = [" ".join([self.version, str(self.status_code), self.reason])]
+        lines.extend("{}: {}".format(*header) for header in self.headers)
         return "\r\n".join(lines)
 
 
@@ -128,8 +126,6 @@ class SSDPRequest(SSDPMessage):
 
     def __str__(self):
         """Return complete SSDP request."""
-        lines = []
-        lines.append(" ".join([self.method, self.uri, self.version]))
-        for header in self.headers:
-            lines.append("{}: {}".format(*header))
+        lines = [f"{self.method} {self.uri} {self.version}"]
+        lines.extend("{}: {}".format(*header) for header in self.headers)
         return "\r\n".join(lines)

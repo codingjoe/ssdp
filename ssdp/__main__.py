@@ -12,9 +12,8 @@ try:
 
     from .lexers import SSDPLexer
 except ImportError as e:
-    raise ImportError(
-        "The SSDP CLI requires needs to be installed via `pip install ssdp[cli]`."
-    ) from e
+    msg = "The SSDP CLI requires needs to be installed via `pip install ssdp[cli]`."
+    raise ImportError(msg) from e
 
 
 class ConsoleMessageProcessor:
@@ -75,7 +74,7 @@ def discover(bind, search_target, max_wait):
     loop = asyncio.new_event_loop()
 
     connect = loop.create_datagram_endpoint(PrintSSDMessageProtocol, family=family)
-    transport, protocol = loop.run_until_complete(connect)
+    transport, _protocol = loop.run_until_complete(connect)
 
     search_request = messages.SSDPRequest(
         "M-SEARCH",
