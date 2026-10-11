@@ -30,8 +30,7 @@ class SSDPMessage:
         """
         if msg.startswith("HTTP/"):
             return SSDPResponse.parse(msg)
-        else:
-            return SSDPRequest.parse(msg)
+        return SSDPRequest.parse(msg)
 
     @classmethod
     def parse_headers(cls, msg):
