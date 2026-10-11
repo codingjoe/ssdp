@@ -1,41 +1,46 @@
 [build-system]
-requires = ["flit_core>=3.12.0", "flit_scm", "wheel"]
 build-backend = "flit_scm:buildapi"
+requires = [ "flit-core>=3.12", "flit-scm", "wheel" ]
 
 [project]
 name = "ssdp"
-authors = [
-  { name = "Johannes Maron", email = "johannes@maron.family" },
-]
 readme = "README.md"
+keywords = [ "asyncio", "iot", "python", "ssdp", "upnp" ]
 license = { file = "LICENSE" }
-keywords = ["ssdp", "python", "asyncio", "upnp", "iot"]
-dynamic = ["version", "description"]
+requires-python = ">=3.14"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
+  "Framework :: AsyncIO",
   "Intended Audience :: Developers",
   "Intended Audience :: Information Technology",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: 3.15",
-  "Framework :: AsyncIO",
-  "Topic :: System :: Networking",
-  "Topic :: Software Development :: Libraries",
   "Topic :: Home Automation",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: System :: Networking",
 ]
-requires-python = ">=3.14"
-
+dynamic = [ "description", "version" ]
+[[project.authors]]
+name = "Johannes Maron"
+email = "johannes@maron.family"
 [project.optional-dependencies]
 cli = [
   "click",
-  "Pygments",
+  "pygments",
 ]
-pygments = ["Pygments"]
+pygments = [ "pygments" ]
+[project.urls]
+Changelog = "https://github.com/codingjoe/ssdp/releases"
+Project-URL = "https://github.com/codingjoe/ssdp"
+[project.scripts]
+ssdp = "ssdp:__main__.ssdp"
+[project.entry-points]
+"pygments.lexers".ssdp = "ssdp.lexers:SSDPLexer"
 
 [dependency-groups]
 dev = [
@@ -46,56 +51,42 @@ test = [
   "pytest-cov",
 ]
 
-[project.scripts]
-ssdp = "ssdp:__main__.ssdp"
-
-[project.entry-points."pygments.lexers"]
-ssdp = "ssdp.lexers:SSDPLexer"
-
-[project.urls]
-Project-URL = "https://github.com/codingjoe/ssdp"
-Changelog = "https://github.com/codingjoe/ssdp/releases"
-
-[tool.flit.module]
-name = "ssdp"
-
 [tool.setuptools_scm]
 write_to = "ssdp/_version.py"
 
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "--cov --tb=short -rxs"
-testpaths = ["tests"]
-
-[tool.coverage.run]
-source = ["ssdp"]
-
-[tool.coverage.report]
-show_missing = true
+[tool.flit]
+[tool.flit.module]
+name = "ssdp"
 
 [tool.ruff]
-src = ["ssdp", "tests"]
-
+src = [ "ssdp", "tests" ]
 [tool.ruff.lint]
 select = [
-    "E", # pycodestyle errors
-    "W", # pycodestyle warnings
-    "F", # pyflakes
-    "I", # isort
-    "S", # flake8-bandit
-    "D", # pydocstyle
-    "UP", # pyupgrade
-    "B", # flake8-bugbear
-    "C", # flake8-comprehensions
+  "B",  # flake8-bugbear
+  "C",  # flake8-comprehensions
+  "D",  # pydocstyle
+  "E",  # pycodestyle errors
+  "F",  # pyflakes
+  "I",  # isort
+  "S",  # flake8-bandit
+  "UP", # pyupgrade
+  "W",  # pycodestyle warnings
 ]
+ignore = [ "B904", "D1", "E501", "S101" ]
+isort.combine-as-imports = true
+isort.force-wrap-aliases = true
+isort.section-order = [ "future", "standard-library", "third-party", "first-party", "local-folder" ]
+isort.split-on-trailing-comma = true
+pydocstyle.convention = "pep257"
 
-ignore = ["B904", "D1", "E501", "S101"]
+[tool.pytest]
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [ "tests" ]
+addopts = "--cov --tb=short -rxs"
 
-[tool.ruff.lint.isort]
-combine-as-imports = true
-split-on-trailing-comma = true
-section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
-force-wrap-aliases = true
-
-[tool.ruff.lint.pydocstyle]
-convention = "pep257"
+[tool.coverage]
+[tool.coverage.run]
+source = [ "ssdp" ]
+[tool.coverage.report]
+show_missing = true
