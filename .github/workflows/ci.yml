@@ -33,7 +33,7 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-      - run: uv run --group test pytest -m "not cli"
+      - run: uv run --group test pytest -m "not cli" --cov-report=xml --cov-report=term
       - uses: codecov/codecov-action@v7
         with:
           use_oidc: true
@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
-      - run: uv run --group=test --extra=cli pytest -m "cli"
+      - run: uv run --group=test --extra=cli pytest -m "cli" --cov-report=xml --cov-report=term
       - uses: codecov/codecov-action@v7
         with:
           use_oidc: true
