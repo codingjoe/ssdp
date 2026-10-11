@@ -165,7 +165,7 @@ class MyProtocol(aio.SimpleServiceDiscoveryProtocol):
         print(request, addr)
 
 
-loop = asyncio.get_event_loop()
+loop = asyncio.new_event_loop()
 connect = loop.create_datagram_endpoint(MyProtocol, family=socket.AF_INET)
 transport, protocol = loop.run_until_complete(connect)
 
