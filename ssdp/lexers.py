@@ -10,8 +10,10 @@ class SSDPLexer(lexers.HttpLexer):
     tokens = {
         "root": [
             (
-                r"(M-SEARCH|NOTIFY)( +)([^ ]+)( +)"
-                r"(HTTP)(/)(1\.[01]|2(?:\.0)?|3)(\r?\n|\Z)",
+                (
+                    r"(M-SEARCH|NOTIFY)( +)([^ ]+)( +)"
+                    r"(HTTP)(/)(1\.[01]|2(?:\.0)?|3)(\r?\n|\Z)"
+                ),
                 lexer.bygroups(
                     token.Name.Function,
                     token.Text,
